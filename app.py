@@ -9,12 +9,20 @@ Deploy: push this repo to GitHub, connect it on render.com (or similar) as a
 Web Service, start command: uvicorn app:app --host 0.0.0.0 --port $PORT
 """
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 import torch
 
 from src.generate import load_model
 
 app = FastAPI(title="MiniGPT Inference API")
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 _device = "cuda" if torch.cuda.is_available() else "cpu"
 _model, _tokenizer, _cfg = None, None, None
